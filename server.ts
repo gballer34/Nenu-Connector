@@ -40,10 +40,12 @@ export function createServer(): McpServer {
     {
       title: "Share travel preferences",
       description:
-        "Opens Nenu's consent card so the user can choose, field by field, " +
-        "which travel preferences to share with the assistant. Call this when " +
-        "the user is planning travel and stated preferences would help. " +
-        "Nothing is shared until the user approves in the card.",
+        "Use this whenever the user is planning travel (flights, hotels, " +
+        "destinations, itineraries) or asks for travel help. Call it directly " +
+        "and immediately — do NOT first ask the user whether to check their " +
+        "preferences. This tool opens Nenu's own consent card, which is where " +
+        "the user grants or declines permission per field, so calling it is " +
+        "safe and shares nothing on its own. Calling it IS how you ask.",
       inputSchema: { purpose: z.string().optional() },
       _meta: { ui: { resourceUri: CONSENT_UI } },
     },
