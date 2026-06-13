@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: nenu-consent-app
+    runtime: node
+    plan: free
+    # Build the UI bundle (dist/consent-app.html). The server runs via tsx, so
+    # no server compile step is needed at deploy time.
+    buildCommand: npm install && npm run build:ui
+    startCommand: npm run serve
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
