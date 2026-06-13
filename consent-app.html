@@ -4,92 +4,284 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Nenu — Consent to share</title>
+    <!-- Match the marketing site: Newsreader serif for display type. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap"
+      rel="stylesheet"
+    />
     <style>
+      /* Design tokens lifted directly from the Nenu marketing site
+         (public/index.html) so the card reads as the same product: warm paper
+         surfaces, deep forest-green accent, Newsreader serif headings. */
       :root {
-        --bg: #ffffff;
-        --fg: #16181d;
-        --muted: #5b6472;
-        --line: #e6e8ec;
-        --card: #f7f8fa;
-        --brand: #4338ca;
-        --brand-fg: #ffffff;
-        --ok: #0f7b4f;
-        --warn: #9a6700;
-        --high: #b42318;
-        --radius: 12px;
+        --surface: #fbf9f4;
+        --paper: #f4f1e9;
+        --canvas: #f1ece2;
+        --ink: #211e18;
+        --ink-soft: #49453b;
+        --muted: #8a8472;
+        --line: #e4dfd3;
+        --accent: #2e4a43;
+        --accent-deep: #22382f;
+        --accent-soft: #e6eae4;
+        --safe: #3f6b52;
+        --safe-soft: #e9eee6;
+        --safe-line: #cbdcc6;
+        --warn: #a86a24;
+        --warn-soft: #f6ecdd;
+        --danger: #a14b3c;
+        --danger-soft: #f2e6df;
+        --danger-line: #e7ccc1;
+        --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia,
+          "Times New Roman", serif;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+          Helvetica, Arial, sans-serif;
+        --radius: 10px;
+        --radius-sm: 7px;
+        --shadow: 0 20px 54px rgba(42, 38, 26, 0.14);
+        --shadow-sm: 0 8px 24px rgba(42, 38, 26, 0.07);
       }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #16181d;
-          --fg: #eceef2;
-          --muted: #9aa3b2;
-          --line: #2a2e37;
-          --card: #1d2027;
-          --brand: #8b85f0;
-          --brand-fg: #16181d;
-          --ok: #4ec38a;
-          --warn: #e0b341;
-          --high: #f08a80;
-        }
+      * {
+        box-sizing: border-box;
       }
-      * { box-sizing: border-box; }
       body {
         margin: 0;
-        font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif;
-        color: var(--fg);
+        font: 14px/1.5 var(--sans);
+        color: var(--ink);
         background: transparent;
       }
-      .wrap { max-width: 560px; padding: 4px; }
-      .head { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
-      .dot {
-        width: 18px; height: 18px; border-radius: 50%;
-        background: var(--brand); flex: 0 0 auto;
+      /* The card gives itself a paper surface so it stays on-brand and legible
+         whether the host chat is light or dark. */
+      .wrap {
+        max-width: 560px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        padding: 18px 18px 16px;
       }
-      .head h1 { font-size: 15px; margin: 0; font-weight: 650; }
-      .sub { color: var(--muted); margin: 2px 0 14px; }
-      .rows { display: flex; flex-direction: column; gap: 8px; }
+      .head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 4px;
+      }
+      /* Nenu logo mark — same rounded green emblem as the site nav. */
+      .nenu-logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: linear-gradient(158deg, #3c5a50, #284139);
+        display: grid;
+        place-items: center;
+        color: #efede3;
+        flex: 0 0 auto;
+      }
+      .nenu-logo svg {
+        width: 16px;
+        height: 16px;
+      }
+      .head h1 {
+        font-family: var(--serif);
+        font-size: 19px;
+        line-height: 1.2;
+        margin: 0;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+      .locked {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--safe);
+        background: var(--safe-soft);
+        border: 1px solid var(--safe-line);
+        padding: 3px 9px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      .locked svg {
+        width: 11px;
+        height: 11px;
+      }
+      .sub {
+        color: var(--ink-soft);
+        margin: 6px 0 16px;
+        font-size: 13.5px;
+      }
+      .rows {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
       .row {
-        display: grid; grid-template-columns: 22px 1fr auto; gap: 10px;
-        align-items: start; padding: 11px 12px; background: var(--card);
-        border: 1px solid var(--line); border-radius: var(--radius);
+        display: grid;
+        grid-template-columns: 20px 1fr auto;
+        gap: 11px;
+        align-items: start;
+        padding: 12px 13px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        transition: border-color 0.12s ease, background 0.12s ease;
       }
-      .row input[type="checkbox"] { width: 16px; height: 16px; margin-top: 2px; }
-      .row .label { font-weight: 600; }
-      .row .value { color: var(--fg); }
-      .row .value.masked { color: var(--muted); font-style: italic; }
-      .row .meta { color: var(--muted); font-size: 12px; margin-top: 3px; }
+      .row:has(input:checked) {
+        border-color: var(--safe-line);
+        background: var(--safe-soft);
+      }
+      .row input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        margin-top: 2px;
+        accent-color: var(--accent);
+      }
+      .row .label {
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .row .value {
+        color: var(--ink-soft);
+        margin-top: 1px;
+      }
+      .row .value.masked {
+        color: var(--muted);
+        font-style: italic;
+      }
+      .row .meta {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 4px;
+      }
       .chip {
-        font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 999px;
-        border: 1px solid var(--line); white-space: nowrap; color: var(--muted);
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        white-space: nowrap;
+        color: var(--muted);
+        background: var(--surface);
       }
-      .chip.low { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--line)); }
-      .chip.medium { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--line)); }
-      .chip.high { color: var(--high); border-color: color-mix(in srgb, var(--high) 40%, var(--line)); }
-      .rulehint { font-size: 11px; color: var(--muted); margin-top: 3px; }
-      .actions { display: flex; gap: 8px; margin-top: 14px; }
+      .chip.low {
+        color: var(--safe);
+        border-color: var(--safe-line);
+        background: var(--safe-soft);
+      }
+      .chip.medium {
+        color: var(--warn);
+        border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
+        background: var(--warn-soft);
+      }
+      .chip.high {
+        color: var(--danger);
+        border-color: var(--danger-line);
+        background: var(--danger-soft);
+      }
+      .rulehint {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .actions {
+        display: flex;
+        gap: 9px;
+        margin-top: 16px;
+      }
       button {
-        font: inherit; font-weight: 600; border-radius: 9px; padding: 9px 14px;
-        border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+        font: inherit;
+        font-weight: 600;
+        border-radius: var(--radius-sm);
+        padding: 10px 16px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
         cursor: pointer;
+        transition: filter 0.12s ease, background 0.12s ease;
       }
-      button.primary { background: var(--brand); color: var(--brand-fg); border-color: var(--brand); }
-      button:disabled { opacity: 0.5; cursor: default; }
-      .foot { color: var(--muted); font-size: 12px; margin-top: 12px; }
-      .done { padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); }
-      .done h2 { font-size: 14px; margin: 0 0 8px; }
-      .led { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); }
-      .led:first-of-type { border-top: 0; }
-      .led .src { color: var(--muted); font-size: 12px; }
-      .led button { padding: 4px 9px; font-size: 12px; }
-      .hidden { display: none; }
+      button:hover {
+        background: var(--canvas);
+      }
+      button.primary {
+        background: var(--accent);
+        color: #f3f1ea;
+        border-color: var(--accent-deep);
+      }
+      button.primary:hover {
+        background: var(--accent-deep);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .foot {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 13px;
+        line-height: 1.5;
+      }
+      .done {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        background: var(--paper);
+      }
+      .done h2 {
+        font-family: var(--serif);
+        font-size: 17px;
+        font-weight: 500;
+        margin: 0 0 8px;
+      }
+      .led {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 0;
+        border-top: 1px dashed var(--line);
+      }
+      .led:first-of-type {
+        border-top: 0;
+      }
+      .led .src {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .led button {
+        padding: 5px 11px;
+        font-size: 12px;
+      }
+      .hidden {
+        display: none;
+      }
     </style>
   </head>
   <body>
     <div class="wrap">
       <div class="head">
-        <span class="dot" aria-hidden="true"></span>
+        <span class="nenu-logo" aria-hidden="true">
+          <!-- vault padlock, same mark the site uses for "Locked" -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.7" stroke-linecap="round">
+            <rect x="5" y="11" width="14" height="9" rx="2" />
+            <path d="M8 11V8a4 4 0 018 0v3" />
+          </svg>
+        </span>
         <h1>Nenu wants to share with this assistant</h1>
+        <span class="locked">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round">
+            <rect x="5" y="11" width="14" height="9" rx="2" />
+            <path d="M8 11V8a4 4 0 018 0v3" />
+          </svg>
+          Locked
+        </span>
       </div>
       <p class="sub" id="sub">
         Choose what leaves your vault. Nothing is shared until you approve.

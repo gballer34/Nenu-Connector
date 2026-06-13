@@ -129,6 +129,22 @@ $("share").addEventListener("click", async () => {
     "Shared selected fields.";
   await app.updateModelContext({ content: [{ type: "text", text }] });
 
+  // updateModelContext only STAGES context; per the MCP Apps spec it does not
+  // trigger a model turn (the host defers it until the next user message). On
+  // its own that left Claude idle after the user clicked Share, and a later
+  // "continue" arrived without the staged brief, so the model reported no
+  // selection. sendMessage delivers an explicit user turn now, which both wakes
+  // the model and carries the just-staged context, so the assistant resumes.
+  await app.sendMessage({
+    role: "user",
+    content: [
+      {
+        type: "text",
+        text: "I approved the fields above from my Nenu vault. Please continue with my request using them.",
+      },
+    ],
+  });
+
   renderResult(text, ledger);
 });
 
@@ -140,6 +156,17 @@ async function declineAll() {
       {
         type: "text",
         text: "The user declined to share any travel preferences from their Nenu vault.",
+      },
+    ],
+  });
+  // Same reason as the share path: stage the decline, then send a turn so the
+  // model actually resumes (here, proceeding without any vault context).
+  await app.sendMessage({
+    role: "user",
+    content: [
+      {
+        type: "text",
+        text: "I declined to share anything from my Nenu vault. Please continue without it.",
       },
     ],
   });
